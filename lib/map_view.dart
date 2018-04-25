@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mapbox/mapbox_map.dart';
 
 class MapView extends StatefulWidget {
-  MapView({ Key key, this.map, this.options }): super(key: key);
+  MapView({Key key, this.map, this.options}) : super(key: key);
 
   final MapboxMap map;
   final MapboxMapOptions options;
@@ -23,11 +23,8 @@ class MapViewState extends State<MapView> {
 
   Future<Null> _createMapView(Size size, MapboxMapOptions options) async {
     try {
-      int textureId = await widget.map.create(
-          width: size.width,
-          height: size.height,
-          options: options
-      );
+      int textureId = await widget.map
+          .create(width: size.width, height: size.height, options: options);
 
       if (!mounted) {
         return;
@@ -42,7 +39,8 @@ class MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    return new LayoutBuilder(builder: (BuildContext context, BoxConstraints constrains) {
+    return new LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constrains) {
       if (constrains.biggest.isEmpty) {
         return new Container();
       }
@@ -64,9 +62,7 @@ class MapViewState extends State<MapView> {
     });
   }
 
-  void _onDoubleTap() {
-
-  }
+  void _onDoubleTap() {}
 
   void _onScaleStart(ScaleStartDetails details) {
     _scaleStartFocal = details.focalPoint;
@@ -75,16 +71,15 @@ class MapViewState extends State<MapView> {
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     final Offset delta = details.focalPoint - _scaleStartFocal;
-    widget.map.moveBy(delta.dx, delta.dy, 0);
+    widget.map.moveBy(_textureId, delta.dx, delta.dy, 0);
 
     if (details.scale != 1.0) {
-
       RenderBox renderBox = context.findRenderObject();
       Offset focalPoint = renderBox.globalToLocal(details.focalPoint);
 
       double newZoom = _zoomLevel(details.scale);
       double _zoomBy = newZoom - _zoom;
-      widget.map.zoomBy(_zoomBy, focalPoint.dx, focalPoint.dy, 0);
+      widget.map.zoomBy(_textureId, _zoomBy, focalPoint.dx, focalPoint.dy, 0);
 
       _zoom = newZoom;
     }
